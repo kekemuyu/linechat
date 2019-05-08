@@ -95,10 +95,12 @@ func (t Tcp) handleConn(conn net.Conn) {
 
 func (t *Tcp) serve() {
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", t.ServAddr)
+
 	if err != nil {
 		panic(err)
 	}
 	conn, err := net.DialTCP("tcp", nil, tcpAddr)
+	fmt.Println(conn, err)
 	defer conn.Close()
 	if err != nil {
 		panic(conn)
