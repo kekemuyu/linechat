@@ -9,9 +9,9 @@ import (
 	"time"
 )
 
-const serverAddr = "127.0.0.1:5000"
-
-type Tcp struct{}
+type Tcp struct {
+	ServAddr string
+}
 
 type msg struct {
 	Mode    byte     //0:broadcast ips 1:send msg
@@ -43,7 +43,10 @@ func (t Tcp) write(conn net.Conn) {
 		if err != nil {
 			panic(err)
 		}
-		conn.Write(bytes)
+		_, err = conn.Write(bytes)
+		if err != nil {
+			panic(err)
+		}
 		time.Sleep(time.Second)
 	}
 }
@@ -79,6 +82,8 @@ func (t Tcp) read(conn net.Conn) {
 			} else if msg.Mode == 0 {
 				fmt.Println("get msg from:", msg.LAddr, msg.Content)
 			}
+		} else {
+			panic(err)
 		}
 	}
 }
@@ -88,8 +93,8 @@ func (t Tcp) handleConn(conn net.Conn) {
 	t.write(conn)
 }
 
-func (t Tcp) serve() {
-	tcpAddr, err := net.ResolveTCPAddr("tcp4", serverAddr)
+func (t *Tcp) serve() {
+	tcpAddr, err := net.ResolveTCPAddr("tcp4", t.ServAddr)
 	if err != nil {
 		panic(err)
 	}

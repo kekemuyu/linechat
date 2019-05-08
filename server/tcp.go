@@ -14,11 +14,11 @@ type msg struct {
 	Content string
 }
 
-const addr = ":5000"
-
 var conns *list.List
 
-type Tcp struct{}
+type Tcp struct {
+	ServAddr string
+}
 
 func init() {
 	conns = list.New()
@@ -72,8 +72,8 @@ func (t Tcp) handleClient(conn net.Conn) {
 	}
 }
 
-func (t Tcp) serve() {
-	tcpAddr, err := net.ResolveTCPAddr("tcp4", addr)
+func (t *Tcp) serve() {
+	tcpAddr, err := net.ResolveTCPAddr("tcp4", t.ServAddr)
 	if err != nil {
 		panic(err)
 	}
